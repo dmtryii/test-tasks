@@ -1,0 +1,17 @@
+
+service:
+  user:
+    ageLimit: 18
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    defer-datasource-initialization: true
+  sql:
+    init:
+      mode: always
