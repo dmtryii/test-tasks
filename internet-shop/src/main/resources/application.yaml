@@ -1,0 +1,19 @@
+
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/internet-shop
+    username:
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+#    defer-datasource-initialization: true
+  security:
+    secret:
+      key:
+  sql:
+    init:
+      mode: always
+
+remove_unpaid_orders:
+  min: 10
