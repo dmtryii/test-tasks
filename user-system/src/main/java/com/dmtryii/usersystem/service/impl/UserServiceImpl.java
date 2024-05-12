@@ -2,12 +2,14 @@ package com.dmtryii.usersystem.service.impl;
 
 import com.dmtryii.usersystem.exception.UserAgeException;
 import com.dmtryii.usersystem.exception.UserNotFountException;
+import com.dmtryii.usersystem.exception.UserNotUpdateException;
 import com.dmtryii.usersystem.model.User;
 import com.dmtryii.usersystem.repository.UserRepository;
 import com.dmtryii.usersystem.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
@@ -25,6 +27,7 @@ public class UserServiceImpl implements UserService {
     private int ageLimit;
 
     @Override
+    @Transactional(readOnly = true)
     public User getById(Long id) {
         return usersRepository.findById(id).orElseThrow(
                 () -> new UserNotFountException("User not fount by id " + id)
@@ -32,6 +35,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User save(User user) {
         if(!isAgeLimited(user.getBirthDate())) {
             throw new UserAgeException("You are not old enough");
@@ -40,6 +44,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public User updateFields(Long id, User updatedUser) {
 
         User currentUser = getById(id);
@@ -60,13 +65,14 @@ public class UserServiceImpl implements UserService {
                     field.set(currentUser, updatedValue);
                 }
             } catch (IllegalAccessException e) {
-                throw new RuntimeException("Error updating user fields", e);
+                throw new UserNotUpdateException("Error updating user fields");
             }
         }
         return save(currentUser);
     }
 
     @Override
+    @Transactional
     public User updateAllFields(Long id, User user) {
         User currentUser = getById(id);
         currentUser.setEmail(user.getEmail());
@@ -79,6 +85,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public void delete(Long id) {
         usersRepository.delete(
                 getById(id)
@@ -86,6 +93,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<User> getAllByDataRange(LocalDate from, LocalDate to) {
         LocalDate defaultFrom = LocalDate.of(1900, 1, 1);
         LocalDate defaultTo = LocalDate.now();

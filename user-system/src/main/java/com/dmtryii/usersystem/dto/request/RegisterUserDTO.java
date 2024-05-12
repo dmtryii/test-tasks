@@ -20,6 +20,6 @@ public class RegisterUserDTO {
     @Past(message = "Birth date must be in the past")
     private LocalDate birthDate;
     private String address;
-    @PhoneNumber
+    @PhoneNumber(message = "Phone is not valid")
     private String phone;
 }
